@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# setul QUANT (CSV-uri mari, nu intră în git)
+/data/

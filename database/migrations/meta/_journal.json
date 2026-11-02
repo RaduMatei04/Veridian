@@ -1,0 +1,34 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1792683062672,
+      "tag": "0000_new_exodus",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1792837318172,
+      "tag": "0001_cloudy_lady_mastermind",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792840631698,
+      "tag": "0002_glossy_warbound",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1793634498851,
+      "tag": "0003_crazy_ricochet",
+      "breakpoints": true
+    }
+  ]
+}

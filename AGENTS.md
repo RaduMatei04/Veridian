@@ -7,3 +7,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
+
+## Reguli de proiect Veridian
+
+Înainte de orice modificare de cod, citește și respectă **[.claude/CLAUDE.md](.claude/CLAUDE.md)**. Acolo sunt regulile de lucru și de UI stabilite pentru acest proiect. Contextul complet al deciziilor de design este în [veridian-context.md](veridian-context.md).

@@ -34,7 +34,29 @@ Implicație: documentația valorează mai mult decât aplicația, deci deciziile
 - Parametri: PM1, PM2.5, PM10, NO, NO2, O3, temperatură, umiditate, presiune.
 - Mai multe locații, deci hartă cu stații și comparații între orașe.
 
-**DE FĂCUT ÎNAINTE de schema bazei de date:** deschide setul QUANT, verifică structura fișierelor, coloanele, dimensiunea totală și licența. Dacă e prea mare pentru planul gratuit Neon (0.5 GB stocare), filtrează (de exemplu o perioadă sau anumiți parametri) sau agregă.
+**Sursa:** Zenodo, https://zenodo.org/records/10775692 (DOI 10.5281/zenodo.10775692). Licență: CC BY 4.0 pe Zenodo; datele provin de la CEDA sub Open Government Licence v3.0 (se citează sursa). Fișierele stau local în `data/quant/` (ignorat de git).
+
+**Analiza (făcută, noiembrie 2026):**
+- `QUANT_Reference_hourly.csv` (26.7 MB, 428.412 rânduri): `time, location, version, measurand, measurement`. 3 situri; `version` = Ratified / Unratified (nu se suprapun).
+- `QUANT_SensorSystems_hourly.csv` (476.9 MB, 6.541.178 rânduri): `time, location, instrument, sensornumber, version, measurand, measurement, flag, flagreason`. 49 de instrumente, unele mutate între orașe; `version` = out-of-box / cal1 / cal2 (PurpleAir: atmospheric / indoor pentru PM).
+- `QUANT_DuplicateRef_hourly.csv` (1.4 MB): instrumente de referință duplicate, doar Manchester. **Nu se importă.**
+- Parametri prezenți: PM2.5, PM10, NO, NO2, O3, Temperature, RelHumidity, Pressure (fără PM1 și CO).
+- Fișierele nu au coordonate: sunt scrise în seed (vezi mai jos).
+
+**Decizii pentru import (`npm run seed`, `database/seed-quant.mjs`):**
+- O **stație** = unul din cele 3 situri. Senzorii sunt tabel separat; stația se reține la fiecare valoare (senzorii se mută).
+- Referința: **orar**, toate valorile (Ratified + Unratified, fără coloană). Presiunea de la York **nu** se importă (584–997 hPa la nivelul mării, eroare în sursă).
+- Senzorii: **medie zilnică**, doar `out-of-box` (la PurpleAir, PM-ul `atmospheric`); mai mulți `sensornumber` intră în aceeași medie. Flag-urile se ignoră (se păstrează toate valorile).
+- Se ignoră doar valorile fizic imposibile: concentrații sub −5 sau peste 1000, temperatură sub −40 sau peste 60 °C (~24 mii valori orare de la senzori).
+- Presiunea senzorilor se aduce la hPa (Arisense raportează în Pa, Praxis în kPa).
+- Rezultat: 3 stații, 49 senzori, ~409 mii valori orare de referință, ~114 mii medii zilnice; baza de date ~59 MB.
+
+**Coordonate (din surse oficiale):**
+| Stație | Lat, Lon | Tip | Sursă |
+|---|---|---|---|
+| London Honor Oak Park (LAQS) | 51.449674, −0.037418 | urban background | CEDA, Lewisham |
+| Manchester Air Quality Supersite (Fallowfield) | 53.4442, −2.2144 | urban background | supliment AMT 2024 (convertit din grade/minute/secunde, **DE CONFIRMAT**) |
+| York Fishergate | 53.951889, −1.075861 | urban traffic | UK-AIR YK11 |
 
 **Alternative (neluate momentan):**
 - Torino (Zenodo): 14 stații low-cost lângă o stație oficială, PM2.5 + temperatură + umiditate, un an. Mai simplu de importat.
@@ -118,13 +140,13 @@ Versiune fixă: pătrat rotunjit `#0e1420` (`rx=14`, viewBox 64) cu V-ul luminos
 
 ## 5. Fluxul aplicației (SPA cu rute Next.js)
 
-1. **`/` pagina de start:** simplă. Fundal gri închis (corespunde shell-ului dark), logo în varianta fixă, un buton jos **„GO TO APPLICATION"**.
-2. **`/login`:** fundalul paginii e culoarea de accent din `localStorage` (implicit **Blue**), iar în centru un **card alb simplu** cu username, parolă și un **buton Login mare** jos. Fără logo.
+1. **`/` pagina de start:** fundal gradient gri închis → gri, logo mare centrat (varianta fixă, bandă albastră), titlul „Urban Environmental Monitoring”, subtitlul „Explore air quality and climate data from urban sensor networks.” și butonul albastru **„Go to Application”**. La orice click pe fundal apare un cerc care se extinde și dispare (ripple).
+2. **`/login`:** fundal **albastru fix, cu gradient** (nu mai folosește accentul utilizatorului, pentru că acesta nu e logat), iar în centru un **card alb cu colțuri rotunjite** cu username, parolă, un **buton Login mare** și link-ul „Create account” spre `/register`. Fără logo.
 3. **`/home`:** după login, redirect aici (interfața principală).
 
 **Protecție rute:** `middleware.ts` verifică cookie-ul JWT. Fără cookie, `/home` și celelalte pagini din aplicație redirecționează la `/login`. Utilizatorul deja logat care deschide `/login` e trimis la `/home`.
 
-**Accent pe `/login`:** la prima vizită `localStorage` e gol, deci culoarea implicită e Blue. `localStorage` ține doar o copie rapidă a accentului în browserul respectiv. **La logout, valoarea din `localStorage` nu se șterge**, ca login-ul să păstreze accentul ultimului utilizator. După login, preferințele reale (temă + accent) se citesc din contul din Neon și se aplică.
+**Accent după login:** `localStorage` ține doar o copie rapidă a temei și accentului (anti-flash pe paginile din aplicație). După login, preferințele reale (temă + accent) se citesc din contul din Neon și se aplică. Paginile `/`, `/login` și `/register` au culori fixe.
 
 **Conturi:** **DE CONFIRMAT.** Opțiuni: link „Create account" pe card sau utilizator demo creat prin seed. Pentru un cont nou, setările implicite sunt **Light Mode + Blue**.
 
@@ -145,11 +167,14 @@ Versiune fixă: pătrat rotunjit `#0e1420` (`rx=14`, viewBox 64) cu V-ul luminos
 
 Fiecare endpoint: validare cu Zod (`safeParse`, 400 la eroare), verificare JWT la rutele protejate (funcție `getUser(request)` reutilizabilă sau middleware), coduri HTTP corecte (200, 400, 401, 404, 500). În documentație, rutele apar într-un tabel (metodă, URL, scop, autentificare necesară).
 
-**Schema bazei de date (minimă, de confirmat după analiza QUANT):**
-- `users`: id, username, password_hash, theme (`light`/`dark`, implicit `light`), accent (implicit `blue`), created_at
-- `stations`: id, nume, oraș, lat, lon
-- `measurements`: station_id, timestamp, parametru, valoare; **index pe `(station_id, timestamp)`**
-- `audit_events`: id, user_id, type, message, created_at, read
+**Schema bazei de date (`database/schema.ts`):**
+- `users`: id, username, password_hash, description, theme (`light`/`dark`, implicit `light`), accent (implicit `blue`), language, created_at
+- `stations`: id, name, city (unic), type, lat, lon
+- `sensors`: id, code (unic, ex. `AQM389`)
+- `measurements` (referință, orar): id, station_id, measured_at, parameter, value; **index pe `(station_id, measured_at)`**
+- `sensor_daily` (senzori, medii zilnice): id, sensor_id, station_id, day, parameter, value; indexuri pe `(station_id, day)` și `(sensor_id, day)`
+- `parameter` e text (ex. `PM2.5`); lista cu unități e în `backend/parameters.ts`
+- `audit_events`: id, user_id, type, message, created_at, read (**încă neadăugat**)
 
 ---
 
@@ -388,7 +413,7 @@ export function RippleButton({ className, children, onClick, ...props }: Compone
 4. Structura și conținutul paginilor Map, Analytics, Stations, Settings, Profile.
 5. Detalii ale paginii de start (în afară de logo, fundal gri închis și butonul „GO TO APPLICATION").
 6. Numele aplicației pe Vercel.
-7. Structura exactă a setului QUANT și dimensiunea lui în raport cu limita de 0.5 GB din Neon Free.
+7. ~~Structura exactă a setului QUANT și dimensiunea lui~~ (rezolvat, vezi secțiunea 2).
 
 ---
 

@@ -4,12 +4,13 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Leagă variabilele de mai jos de clasele Tailwind (bg-card, text-primary etc.) */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
+  --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  --font-heading: var(--font-sans);
+  --font-heading: var(--font-geist-sans);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -27,6 +28,8 @@
   --color-input: var(--input);
   --color-border: var(--border);
   --color-destructive: var(--destructive);
+  --color-success: var(--success);
+  --color-success-muted: var(--success-muted);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
   --color-muted-foreground: var(--muted-foreground);
@@ -48,73 +51,109 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* ===== TEMA LIGHT (implicită): alb spălăcit ===== */
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
+  --background: #f1f3f6; /* shell */
+  --foreground: #1b2230;
+  --card: #fafbfc;
+  --card-foreground: #1b2230;
+  --popover: #fafbfc;
+  --popover-foreground: #1b2230;
+  --secondary: #e6e9ee;
+  --secondary-foreground: #1b2230;
+  --muted: #e6e9ee;
+  --muted-foreground: #667085;
+  --accent: #e6e9ee; /* shadcn: fundal la hover (NU e culoarea de accent) */
+  --accent-foreground: #1b2230;
+  --destructive: #dc2626;
+  --success: #15803d; /* mesaje de confirmare (verde) */
+  --success-muted: #f0fdf4;
+  --border: #dde1e8;
+  --input: #dde1e8;
+  --ring: var(--primary);
   --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+
+  --sidebar: #eceff3;
+  --sidebar-foreground: #1b2230;
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--sidebar-hover);
+  --sidebar-accent-foreground: #1b2230;
+  --sidebar-border: #dde1e8;
+  --sidebar-ring: var(--primary);
+
+  /* Variabile proprii Veridian */
+  --accent-color: var(--primary); /* culoarea de accent aleasă de utilizator */
+  --sidebar-hover: #e0e4ea;
+  --logo-fill: #4b5563;
+
+  /* Serii pentru grafice: prima e accentul */
+  --chart-1: var(--primary);
+  --chart-2: #0d9488;
+  --chart-3: #f07818;
+  --chart-4: #8b5cf6;
+  --chart-5: #db2777;
+
+  color-scheme: light;
 }
 
+/* ===== TEMA DARK: albastru-negru ===== */
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --background: #0e1420;
+  --foreground: #eef1f6;
+  --card: #151c2b;
+  --card-foreground: #eef1f6;
+  --popover: #151c2b;
+  --popover-foreground: #eef1f6;
+  --secondary: #1c2535;
+  --secondary-foreground: #eef1f6;
+  --muted: #1c2535;
+  --muted-foreground: #98a2b3;
+  --accent: #1c2535;
+  --accent-foreground: #eef1f6;
+  --destructive: #ef4444;
+  --success: #4ade80;
+  --success-muted: #0b2a1a;
+  --border: #243044;
+  --input: #243044;
+
+  --sidebar: #111826;
+  --sidebar-foreground: #eef1f6;
+  --sidebar-accent-foreground: #eef1f6;
+  --sidebar-border: #243044;
+
+  --sidebar-hover: #1f2a3d;
+  --logo-fill: #e8ecf3;
+
+  color-scheme: dark;
+}
+
+/* ===== ACCENTE: atributul data-accent de pe <html> =====
+   Independente de temă: aceeași culoare pe light și pe dark. */
+:root,
+[data-accent="blue"] {
+  --primary: #3478f6;
+  --primary-foreground: #ffffff;
+}
+[data-accent="teal"] {
+  --primary: #0d9488;
+  --primary-foreground: #ffffff;
+}
+[data-accent="orange"] {
+  --primary: #f07818;
+  --primary-foreground: #1a1a1a; /* alb pe portocaliu are contrast prea mic */
+}
+[data-accent="pink"] {
+  --primary: #db2777;
+  --primary-foreground: #ffffff;
+}
+[data-accent="lila"] {
+  --primary: #8b5cf6;
+  --primary-foreground: #ffffff;
+}
+[data-accent="red"] {
+  --primary: #dc2626;
+  --primary-foreground: #ffffff;
 }
 
 @layer base {
@@ -124,10 +163,112 @@
   body {
     @apply bg-background text-foreground;
   }
-  button:not(:disabled), [role="button"]:not(:disabled) {
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
     cursor: pointer;
   }
   html {
     @apply font-sans;
+  }
+
+  /* Tranziție scurtă la schimbarea temei sau a accentului */
+  *,
+  *::before,
+  *::after {
+    transition:
+      background-color 200ms,
+      color 200ms,
+      border-color 200ms;
+  }
+}
+
+/* Mesajul verde de după salvare (StatusMessage): stă vizibil, apoi se estompează.
+   Durata (3s) e aceeași ca în frontend/hooks/use-status.ts, care îl scoate din pagină. */
+@keyframes status-fade {
+  0%,
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+.status-fade {
+  animation: status-fade 3s ease-in forwards;
+}
+
+/* Ripple la click pe butoanele din meniul sidebar (componenta SidebarLink):
+   cercul crește de la 0 la mărimea lui și se estompează în același timp. */
+@keyframes ripple {
+  from {
+    transform: scale(0);
+    opacity: 0.3;
+  }
+  to {
+    transform: scale(1);
+    opacity: 0;
+  }
+}
+.ripple {
+  animation: ripple 600ms ease-out forwards;
+}
+
+/* Coperta de după login (LoginCover): apare, apoi logo-ul se întoarce și crește în timp ce
+   toată coperta se estompează (aceeași durată, 850 ms: încet la început, mai rapid spre final).
+   Cine are „reduce motion” activat nu vede coperta deloc (verificarea e în login-cover.tsx). */
+@keyframes login-cover-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes login-cover-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+/* Logo-ul are de la început mărimea finală (70% din latura mică a ecranului)
+   și pornește micșorat la 15%. perspective() dă adâncime rotației pe axa verticală. */
+@keyframes login-cover-zoom {
+  from {
+    transform: perspective(1000px) rotateY(0deg) scale(0.15);
+  }
+  to {
+    transform: perspective(1000px) rotateY(360deg) scale(1);
+  }
+}
+.login-cover-enter {
+  animation: login-cover-in 150ms ease-out forwards;
+}
+.login-cover-exit {
+  animation: login-cover-out 850ms ease-in forwards;
+}
+.login-cover-logo {
+  width: 70vmin;
+  height: 70vmin;
+  transform: scale(0.15);
+}
+.login-cover-zoom {
+  animation: login-cover-zoom 850ms ease-in-out forwards;
+}
+
+/* Fără animații pentru cine le-a dezactivat din sistem */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+  }
+  .status-fade {
+    animation: none;
+  }
+  .ripple {
+    animation: none;
+    opacity: 0;
   }
 }
