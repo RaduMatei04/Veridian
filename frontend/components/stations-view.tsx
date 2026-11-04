@@ -6,6 +6,7 @@ import { PageHeader } from "@/frontend/components/page-header";
 import { Card, CardContent, CardHeader, CardTitle } from "@/frontend/components/ui/card";
 import { useStations } from "@/frontend/hooks/use-stations";
 import { useTranslation } from "@/frontend/hooks/use-translation";
+import { formatMonth } from "@/frontend/lib/format";
 
 type Station = StationsResponse["stations"][number];
 
@@ -88,10 +89,4 @@ function InfoRow({ icon: Icon, children }: { icon: typeof MapPin; children: Reac
       <span>{children}</span>
     </p>
   );
-}
-
-// "2019-12-10" → "Dec 2019" (en) sau "dec. 2019" (ro), fără biblioteci
-function formatMonth(day: string, language: string) {
-  const [year, month] = day.split("-").map(Number);
-  return new Intl.DateTimeFormat(language, { month: "short", year: "numeric" }).format(new Date(year, month - 1));
 }

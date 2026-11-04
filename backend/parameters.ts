@@ -12,3 +12,7 @@ export const PARAMETERS = {
 } as const;
 
 export type Parameter = keyof typeof PARAMETERS;
+
+// Perioadele din pagina Analytics: tot setul, un an, sau ultima lună cu date.
+export const PERIODS = ["all", "2020", "2021", "2022", "last-month"] as const;
+export type Period = (typeof PERIODS)[number];

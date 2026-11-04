@@ -15,6 +15,7 @@ Veridian: Urban Environmental Monitoring. Proiect de facultate (Next.js + Neon),
 
 - Versiunea instalată e Next.js 16 (React 19, Tailwind v4). Înainte de a folosi un API Next.js, citește ghidul din `node_modules/next/dist/docs/`.
 - `middleware.ts` se numește acum **`proxy.ts`** (în rădăcină). `cookies()` și `headers()` sunt asincrone (`await cookies()`).
+- `cacheComponents` e activ: la navigare, paginile nu se demontează, ci se ascund cu React `<Activity>` (efectele fac cleanup, starea rămâne). Bibliotecile care creează obiecte proprii în DOM (ex. Leaflet) trebuie recreate la revenire: `useLayoutEffect` cu cleanup care schimbă `key`-ul (vezi `stations-map.tsx` și ghidul `preserving-ui-state.md`).
 - `"use client"` doar unde e nevoie (hook-uri React, evenimente, `localStorage`). Restul rămân componente de server.
 
 ## Structura folderelor
@@ -69,6 +70,7 @@ Veridian: Urban Environmental Monitoring. Proiect de facultate (Next.js + Neon),
 - Șase accente, prin atributul `data-accent` pe `<html>`: `blue` (implicit), `teal`, `orange`, `pink`, `lila`, `red`. Lista și funcția `setAccent()` sunt în `frontend/lib/accent.ts`; nu se duplică în alte fișiere.
 - Tema și accentul sunt independente (2 × 6 combinații). Orice componentă nouă trebuie să arate bine în toate.
 - Tema și accentul se schimbă **doar din pagina Settings**. Se salvează în Neon (contul utilizatorului) și în `localStorage` (copie rapidă: `veridian-theme`, `veridian-accent`).
+- Schimbarea temei și a accentului e **instantă**: fără tranziție globală de culori în `globals.css`; tranzițiile sunt oprite pentru un cadru la schimbare (`disableTransitionOnChange` în `providers.tsx`, același mecanism în `setAccent()`). Animațiile (ripple, hover) rămân.
 - Paginile `/`, `/login` și `/register` **nu** folosesc tema sau accentul utilizatorului (culori fixe, vezi mai sus).
 - Cont nou: Light + Blue.
 
@@ -109,8 +111,9 @@ Veridian: Urban Environmental Monitoring. Proiect de facultate (Next.js + Neon),
 
 ### Grafice și hartă
 
-- Graficele citesc culorile din variabile (`var(--chart-1)`…`var(--chart-5)`, `var(--primary)`, `var(--muted-foreground)`), nu valori fixe.
-- Harta Leaflet: componentă `"use client"` încărcată cu import dinamic fără SSR; în dark mode se folosesc tile-uri închise (CARTO Dark Matter).
+- Graficele citesc culorile din variabile (`var(--chart-1)`…`var(--chart-3)`, `var(--primary)`, `var(--muted-foreground)`), nu valori fixe.
+- Graficele rămân în familia accentului: `--chart-1` = accentul, `--chart-2` / `--chart-3` = nuanțe mai închise / mai deschise ale lui, definite pentru fiecare accent și temă în `globals.css` („NUANȚE PENTRU GRAFICE”). Fără alte culori pe grafice.
+- Harta Leaflet (`react-leaflet`): componentă `"use client"` încărcată cu import dinamic fără SSR (`frontend/components/map/`). Tile-uri Esri fără cheie API: World Light Gray pe Light, World Dark Gray pe Dark (CARTO cere acum cheie). Stilurile Leaflet (popup, controale) sunt suprascrise cu token-uri în `globals.css` (`.map-card ...`); butoanele de zoom sunt carduri rotunjite separate, cu + / − în accent. Harta se recalculează la schimbarea mărimii containerului (`ResizeWatcher`).
 
 ### Contrast
 

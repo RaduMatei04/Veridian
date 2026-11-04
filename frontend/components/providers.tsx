@@ -19,6 +19,9 @@ export function Providers({ children }: { children: React.ReactNode }) {
         defaultTheme="light"
         enableSystem={false}
         storageKey="veridian-theme"
+        // Oprește orice tranziție CSS pentru un cadru, exact când se schimbă tema,
+        // ca toată pagina să treacă instant (fără zone care se schimbă în ritmuri diferite)
+        disableTransitionOnChange
       >
         <TooltipProvider>
           {/* Coperta animată dintre /login și /home */}

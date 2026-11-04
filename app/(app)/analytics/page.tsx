@@ -1,6 +1,6 @@
-import { PlaceholderPage } from "@/frontend/components/placeholder-page";
+import { AnalyticsView } from "@/frontend/components/analytics/analytics-view";
 
-// Pagină de completat: conținutul se stabilește într-un pas următor.
+// Pagina Analytics: graficul măsurătorilor de referință (vezi AnalyticsView).
 export default function AnalyticsPage() {
-  return <PlaceholderPage page="analytics" />;
+  return <AnalyticsView />;
 }

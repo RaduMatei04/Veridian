@@ -1,6 +1,6 @@
-import { PlaceholderPage } from "@/frontend/components/placeholder-page";
+import { MapView } from "@/frontend/components/map/map-view";
 
-// Pagină de completat: conținutul se stabilește într-un pas următor.
+// Pagina Map: harta cu cele 3 stații (vezi MapView).
 export default function MapPage() {
-  return <PlaceholderPage page="map" />;
+  return <MapView />;
 }

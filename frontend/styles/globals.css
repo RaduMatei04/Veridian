@@ -87,10 +87,9 @@
   --sidebar-hover: #e0e4ea;
   --logo-fill: #4b5563;
 
-  /* Serii pentru grafice: prima e accentul */
+  /* Serii pentru grafice: prima e accentul; --chart-2 și --chart-3 sunt nuanțe ale accentului
+     (definite mai jos, la fiecare accent). --chart-4/5 nu sunt folosite de paginile noastre. */
   --chart-1: var(--primary);
-  --chart-2: #0d9488;
-  --chart-3: #f07818;
   --chart-4: #8b5cf6;
   --chart-5: #db2777;
 
@@ -156,6 +155,63 @@
   --primary-foreground: #ffffff;
 }
 
+/* ===== NUANȚE PENTRU GRAFICE (Analytics): 3 culori din familia accentului =====
+   --chart-1 e chiar accentul. --chart-2 și --chart-3 au aceeași nuanță, dar altă luminozitate
+   (calculate în OKLCH), ca liniile să se deosebească fără să iasă din culoarea aleasă.
+   Light: o nuanță mai închisă și una mai deschisă. Dark: una mai deschisă și una mai închisă.
+   (La Orange pe Light, accentul e deja deschis, deci ambele nuanțe sunt mai închise.) */
+:root,
+[data-accent="blue"] {
+  --chart-2: #0342ad;
+  --chart-3: #70a3ff;
+}
+[data-accent="teal"] {
+  --chart-2: #025a52;
+  --chart-3: #5db7ab;
+}
+[data-accent="orange"] {
+  --chart-2: #a24d04;
+  --chart-3: #612c02;
+}
+[data-accent="pink"] {
+  --chart-2: #8b0146;
+  --chart-3: #fa679c;
+}
+[data-accent="lila"] {
+  --chart-2: #5826ae;
+  --chart-3: #ab91ff;
+}
+[data-accent="red"] {
+  --chart-2: #890109;
+  --chart-3: #fa675b;
+}
+/* Dark: clasa .dark și data-accent sunt amândouă pe <html> */
+.dark:not([data-accent]),
+.dark[data-accent="blue"] {
+  --chart-2: #9abffe;
+  --chart-3: #0b51cc;
+}
+.dark[data-accent="teal"] {
+  --chart-2: #87cec4;
+  --chart-3: #046d64;
+}
+.dark[data-accent="orange"] {
+  --chart-2: #fed4bb;
+  --chart-3: #bc5b05;
+}
+.dark[data-accent="pink"] {
+  --chart-2: #fe97b7;
+  --chart-3: #a70256;
+}
+.dark[data-accent="lila"] {
+  --chart-2: #c1b3ff;
+  --chart-3: #6a32cc;
+}
+.dark[data-accent="red"] {
+  --chart-2: #ff9488;
+  --chart-3: #a8010e;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -170,16 +226,8 @@
   html {
     @apply font-sans;
   }
-
-  /* Tranziție scurtă la schimbarea temei sau a accentului */
-  *,
-  *::before,
-  *::after {
-    transition:
-      background-color 200ms,
-      color 200ms,
-      border-color 200ms;
-  }
+  /* Schimbarea temei și a accentului e instantă: nu există o tranziție globală de culori
+     (ar anima doar o parte din elemente și ar produce „clipping”). Vezi providers.tsx și accent.ts. */
 }
 
 /* Mesajul verde de după salvare (StatusMessage): stă vizibil, apoi se estompează.
@@ -255,6 +303,66 @@
 }
 .login-cover-zoom {
   animation: login-cover-zoom 850ms ease-in-out forwards;
+}
+
+/* Harta (Leaflet): stilurile Leaflet au culori fixe (popup alb, linkuri albastre).
+   Le înlocuim cu token-urile temei, ca harta să arate bine pe Light și Dark și cu orice accent.
+   Selectoarele încep cu .map-card ca să fie mai specifice decât cele din leaflet.css. */
+.map-card .leaflet-container {
+  background: var(--muted);
+  font-family: inherit;
+}
+.map-card .leaflet-popup-content-wrapper,
+.map-card .leaflet-popup-tip {
+  background: var(--popover);
+  color: var(--popover-foreground);
+  box-shadow: 0 4px 16px rgb(0 0 0 / 0.2);
+}
+.map-card .leaflet-popup-content-wrapper {
+  border-radius: var(--radius);
+}
+.map-card .leaflet-popup-content p {
+  margin: 0; /* leaflet.css pune 17px între paragrafe; spațierea vine din gap-ul nostru */
+}
+.map-card .leaflet-container a.leaflet-popup-close-button {
+  color: var(--muted-foreground);
+}
+.map-card .leaflet-container a.map-popup-link {
+  color: var(--primary-foreground);
+}
+/* Butoanele de zoom (+ / −): două butoane separate, rotunjite, în stilul cardurilor shadcn,
+   cu simbolurile în culoarea de accent. Selectoarele lungi bat regulile din leaflet.css. */
+.map-card .leaflet-container .leaflet-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+}
+.map-card .leaflet-container .leaflet-control-zoom .leaflet-control-zoom-in,
+.map-card .leaflet-container .leaflet-control-zoom .leaflet-control-zoom-out {
+  width: 34px;
+  height: 34px;
+  line-height: 32px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--primary);
+  font-family: inherit;
+  font-size: 20px;
+  font-weight: 500;
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.12);
+  transition: background-color 200ms;
+}
+.map-card .leaflet-container .leaflet-control-zoom .leaflet-control-zoom-in:hover,
+.map-card .leaflet-container .leaflet-control-zoom .leaflet-control-zoom-out:hover {
+  background: var(--muted);
+}
+/* La zoom maxim / minim, butonul respectiv se estompează */
+.map-card .leaflet-container .leaflet-control-zoom .leaflet-disabled {
+  color: var(--muted-foreground);
+  opacity: 0.5;
 }
 
 /* Fără animații pentru cine le-a dezactivat din sistem */

@@ -41,12 +41,6 @@ const en = {
       yesterday: "yesterday",
     },
   },
-  pages: {
-    map: "Map",
-    analytics: "Analytics",
-    stations: "Stations",
-    workInProgress: "Work in progress.",
-  },
   common: {
     save: "Save",
     saving: "Saving...",
@@ -99,6 +93,26 @@ const en = {
       "urban traffic": "Urban traffic",
     } as Record<string, string>,
   },
+  map: {
+    title: "Map",
+    viewInAnalytics: "View in Analytics",
+  },
+  analytics: {
+    title: "Analytics",
+    stations: "Stations",
+    parameter: "Parameter",
+    period: "Period",
+    periods: { all: "All", "2020": "2020", "2021": "2021", "2022": "2022", "last-month": "Last month of data" },
+    // Ce reprezintă un punct din grafic (depinde de perioadă)
+    resolutions: { week: "Weekly averages", day: "Daily averages", hour: "Hourly values" },
+    average: "Average",
+    minimum: "Min",
+    maximum: "Max",
+    unavailable: "No data for this parameter",
+    noData: "No data",
+    noDataHint: "Choose at least one station that measures this parameter.",
+    loadError: "Could not load the measurements.",
+  },
   // Numele parametrilor măsurați (cheile sunt cele din backend/parameters.ts)
   parameters: {
     "PM2.5": "PM2.5",
@@ -119,6 +133,7 @@ const en = {
     not_found: "User not found.",
     network: "Could not reach the server.",
     generic: "Something went wrong.",
+    invalid_query: "Invalid stations, parameter or period.",
   },
 };
 
@@ -157,12 +172,6 @@ const ro: typeof en = {
       hours: "acum 2 ore",
       yesterday: "ieri",
     },
-  },
-  pages: {
-    map: "Hartă",
-    analytics: "Analize",
-    stations: "Stații",
-    workInProgress: "Pagină în lucru.",
   },
   common: {
     save: "Salvează",
@@ -214,6 +223,25 @@ const ro: typeof en = {
       "urban traffic": "Trafic urban",
     },
   },
+  map: {
+    title: "Hartă",
+    viewInAnalytics: "Vezi în Analize",
+  },
+  analytics: {
+    title: "Analize",
+    stations: "Stații",
+    parameter: "Parametru",
+    period: "Perioadă",
+    periods: { all: "Tot", "2020": "2020", "2021": "2021", "2022": "2022", "last-month": "Ultima lună cu date" },
+    resolutions: { week: "Medii săptămânale", day: "Medii zilnice", hour: "Valori orare" },
+    average: "Medie",
+    minimum: "Min",
+    maximum: "Max",
+    unavailable: "Nu există date pentru acest parametru",
+    noData: "Nu există date",
+    noDataHint: "Alege cel puțin o stație care măsoară acest parametru.",
+    loadError: "Măsurătorile nu au putut fi încărcate.",
+  },
   parameters: {
     "PM2.5": "PM2.5",
     PM10: "PM10",
@@ -233,6 +261,7 @@ const ro: typeof en = {
     not_found: "Utilizatorul nu a fost găsit.",
     network: "Serverul nu a putut fi contactat.",
     generic: "Ceva nu a funcționat.",
+    invalid_query: "Stații, parametru sau perioadă invalide.",
   },
 };
 

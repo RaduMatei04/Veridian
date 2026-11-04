@@ -23,7 +23,7 @@ export function HomeView() {
   const events: readonly (typeof MOCK_EVENTS)[number][] = MOCK_EVENTS;
 
   return (
-    <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
+    <div className="mx-auto flex w-full max-w-3xl flex-col gap-10">
       {/* Card de salut */}
       <Card>
         <CardContent className="flex items-center gap-4">

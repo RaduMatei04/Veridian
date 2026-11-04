@@ -18,7 +18,17 @@ export const ACCENT_STORAGE_KEY = "veridian-accent";
 
 // Schimbă accentul imediat și îl ține minte în browser.
 export function setAccent(accent: Accent) {
+  // Ca la temă (disableTransitionOnChange din next-themes): oprim orice tranziție CSS cât timp
+  // se schimbă culoarea, ca toată pagina să treacă instant la noul accent.
+  const noTransitions = document.createElement("style");
+  noTransitions.textContent = "*,*::before,*::after{transition:none!important}";
+  document.head.appendChild(noTransitions);
+
   document.documentElement.dataset.accent = accent;
+
+  // Forțăm browserul să aplice noile culori acum, apoi readucem tranzițiile (ex. hover-ul butoanelor)
+  void window.getComputedStyle(document.body).opacity;
+  setTimeout(() => noTransitions.remove(), 1);
   try {
     localStorage.setItem(ACCENT_STORAGE_KEY, accent);
   } catch {

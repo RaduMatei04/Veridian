@@ -15,7 +15,7 @@ export function ProfileView() {
       <PageHeader icon={UserRound} title={t.profile.title} />
       <UserLoader>
         {(user) => (
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-10">
             <UsernameSetting user={user} />
             <DescriptionSetting user={user} />
           </div>

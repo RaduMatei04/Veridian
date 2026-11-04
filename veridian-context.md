@@ -161,8 +161,7 @@ Versiune fixă: pătrat rotunjit `#0e1420` (`rx=14`, viewBox 64) cu V-ul luminos
 | PUT | `/api/profile` | actualizare profil |
 | PUT | `/api/settings` | salvare temă + accent |
 | GET | `/api/stations` | lista stațiilor (hartă) |
-| GET | `/api/measurements?station=&param=&from=&to=` | măsurători filtrate (grafice) |
-| GET | `/api/measurements/latest` | ultimele valori |
+| GET | `/api/measurements?stations=1,2,3&parameter=PM2.5&period=<all, 2020, 2021, 2022 sau last-month>` | puncte pentru grafic (medii săptămânale / zilnice / valori orare, după perioadă) + medie/min/max pe stație |
 | GET | `/api/audit?limit=8` | ultimele evenimente (card notificări) |
 
 Fiecare endpoint: validare cu Zod (`safeParse`, 400 la eroare), verificare JWT la rutele protejate (funcție `getUser(request)` reutilizabilă sau middleware), coduri HTTP corecte (200, 400, 401, 404, 500). În documentație, rutele apar într-un tabel (metodă, URL, scop, autentificare necesară).
@@ -329,7 +328,7 @@ Temă și accent sunt independente (2 × 6 combinații). **Contrast (calcule apr
 3. Tranziție scurtă la schimbare (`transition: background-color 200ms, color 200ms`), respectând `prefers-reduced-motion`.
 
 **Locuri unde tema nu se schimbă automat:**
-- **Harta Leaflet:** tile-urile sunt imagini; pentru dark mode, set de tile-uri închise (de exemplu CARTO Dark Matter) sau filtru CSS pe strat.
+- **Harta Leaflet:** tile-urile sunt imagini. Decis: Esri World Light Gray (Light) și World Dark Gray (Dark), fără cheie API; CARTO Positron / Dark Matter cer acum cheie API.
 - **Graficele:** culorile seriilor și ale axelor se citesc din variabile (`var(--primary)`, `var(--muted-foreground)`), nu se scriu fix.
 
 ---
@@ -394,9 +393,9 @@ export function RippleButton({ className, children, onClick, ...props }: Compone
 
 ## 10. Funcții planificate (conținutul paginilor, de discutat)
 
-- **Map:** hartă cu stațiile (Leaflet), pe orașe.
-- **Analytics:** grafice în timp (Recharts / chart-urile shadcn), filtre pe stație, parametru și perioadă.
-- **Stations:** lista stațiilor cu detalii.
+- **Map:** card mare cu harta (react-leaflet), 3 markere în accent, popup cu informațiile stației și link „View in Analytics” (`/analytics?station=<id>`).
+- **Analytics:** un grafic cu linii (shadcn Chart / Recharts), doar date de referință. Filtre în URL (`?station=&parameter=&period=`): stații bifabile (cele fără parametrul ales sunt dezactivate), 8 parametri, perioade All / 2020 / 2021 / 2022 / ultima lună cu date (comună stațiilor alese). Rezoluție automată: All → săptămânal, an → zilnic, lună → orar. Carduri cu medie / min / max pe stație. Implicit: toate stațiile, PM2.5, All. Culorile liniilor: `--chart-1` (accent) + `--chart-2…5`, sărind culoarea egală cu accentul.
+- **Stations:** câte un card pe stație (oraș, tip, coordonate, perioadă, număr de senzori, parametri).
 - **Settings:** selectoarele THEME și ACCENT (conținutul detaliat se stabilește la implementare).
 - **Profile:** pagina de profil personal (acces din user card).
 - Valori curente și istoric pentru parametri (PM2.5, PM10, NO2, O3, temperatură etc.).
