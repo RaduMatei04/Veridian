@@ -73,3 +73,23 @@ export const sensorDaily = pgTable(
     index("sensor_daily_sensor_day_idx").on(t.sensorId, t.day),
   ],
 );
+
+// ---- Jurnalul de activitate (cardul Notifications de pe Home) ----
+
+// Un rând pe acțiune a utilizatorului (login, schimbare de accent etc.).
+// Se salvează tipul și valoarea, nu textul: textul vine din dicționar, în limba aleasă.
+// Rândurile mai vechi de 30 de zile se șterg la scrierea unui eveniment nou (backend/audit.ts).
+export const auditEvents = pgTable(
+  "audit_events",
+  {
+    id: serial("id").primaryKey(),
+    userId: integer("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    type: varchar("type", { length: 30 }).notNull(), // ex. "accent_changed"
+    detail: varchar("detail", { length: 30 }), // ex. "teal" (poate lipsi)
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  // Cardul cere ultimele evenimente ale unui utilizator
+  (t) => [index("audit_events_user_time_idx").on(t.userId, t.createdAt)]
+);

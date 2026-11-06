@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ChartLine, ChartNoAxesColumn, LoaderCircle } from "lucide-react";
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import { PARAMETERS, type Parameter } from "@/backend/parameters";
@@ -41,6 +41,31 @@ export function MeasurementsChart({
   function showPoint(state: { activeTooltipIndex?: unknown }) {
     setHoveredIndex(state.activeTooltipIndex == null ? null : Number(state.activeTooltipIndex));
   }
+
+  // Cât timp sidebar-ul se deschide / se închide, lățimea zonei graficului se schimbă la fiecare cadru.
+  // În acest timp ascundem graficul și arătăm „Se încarcă...”; după 150 ms fără schimbări
+  // (tranziția s-a terminat), graficul se desenează o singură dată, la lățimea finală.
+  const chartBoxRef = useRef<HTMLDivElement>(null);
+  const [resizing, setResizing] = useState(false);
+  const hasStations = stations.length > 0;
+  useEffect(() => {
+    const box = chartBoxRef.current;
+    if (!box) return;
+    let lastWidth = box.offsetWidth;
+    let timer: number | undefined;
+    const observer = new ResizeObserver(() => {
+      if (box.offsetWidth === lastWidth) return; // doar înălțimea s-a schimbat (ex. graficul a apărut)
+      lastWidth = box.offsetWidth;
+      setResizing(true);
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => setResizing(false), 150);
+    });
+    observer.observe(box);
+    return () => {
+      observer.disconnect();
+      window.clearTimeout(timer);
+    };
+  }, [hasStations]);
 
   // Stare goală: nicio stație aleasă nu măsoară parametrul
   if (stations.length === 0) {
@@ -122,22 +147,18 @@ export function MeasurementsChart({
           )}
         </CardHeader>
 
-        <CardContent>
-          {isLoading && (
+        {/* ref: urmărim lățimea acestei zone, ca să știm când se mișcă sidebar-ul (vezi resizing) */}
+        <CardContent ref={chartBoxRef}>
+          {/* Încărcare: la prima cerere sau cât timp sidebar-ul se deschide / se închide */}
+          {(isLoading || (resizing && data)) && (
             <div className="flex h-80 items-center justify-center gap-2 text-muted-foreground">
               <LoaderCircle className="size-4 animate-spin" /> {t.common.loading}
             </div>
           )}
           {isError && <p className="text-destructive">{t.analytics.loadError}</p>}
 
-          {data && (
-            <ChartContainer
-              config={config}
-              className="aspect-auto h-80 w-full"
-              // La închiderea / deschiderea sidebar-ului lățimea se schimbă la fiecare cadru (300 ms).
-              // Fără debounce, graficul s-ar redesena de zeci de ori; așa se redesenează o dată, la final.
-              debounce={150}
-            >
+          {data && !resizing && (
+            <ChartContainer config={config} className="aspect-auto h-80 w-full">
               <LineChart
                 data={data.points}
                 margin={{ left: 0, right: 8 }}

@@ -4,6 +4,7 @@ import { db } from "@/database/db";
 import { users } from "@/database/schema";
 import { checkPassword } from "@/auth/password";
 import { setSessionCookie } from "@/auth/session";
+import { logEvent } from "@/backend/audit";
 import { loginSchema } from "@/backend/validation/auth";
 
 // POST /api/auth/login: verifică parola și setează cookie-ul cu JWT
@@ -22,5 +23,6 @@ export async function POST(request: Request) {
   }
 
   await setSessionCookie({ userId: user.id, username: user.username });
+  await logEvent(user.id, "login"); // apare în cardul Notifications
   return NextResponse.json({ ok: true });
 }

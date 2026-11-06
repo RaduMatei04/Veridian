@@ -5,6 +5,7 @@ import { Check, Palette } from "lucide-react";
 import { RippleButton } from "@/frontend/components/ripple-button";
 import { SettingsSection } from "@/frontend/components/settings/settings-section";
 import { StatusMessage } from "@/frontend/components/settings/status-message";
+import { AUDIT_KEY } from "@/frontend/hooks/use-audit";
 import { CURRENT_USER_KEY, type CurrentUser } from "@/frontend/hooks/use-current-user";
 import { useStatus } from "@/frontend/hooks/use-status";
 import { useTranslation } from "@/frontend/hooks/use-translation";
@@ -31,6 +32,7 @@ export function AccentSetting({ user }: { user: CurrentUser }) {
     if (result.user) {
       // 4a. Succes: păstrăm ce a confirmat serverul
       queryClient.setQueryData(CURRENT_USER_KEY, result.user);
+      queryClient.invalidateQueries({ queryKey: AUDIT_KEY }); // notificările se reîncarcă
     } else {
       // 4b. Eroare: revenim la culoarea veche
       queryClient.setQueryData(CURRENT_USER_KEY, user);

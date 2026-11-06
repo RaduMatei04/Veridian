@@ -6,6 +6,7 @@ import { NotebookPen, Save } from "lucide-react";
 import { SettingsSection, saveButtonClass } from "@/frontend/components/settings/settings-section";
 import { StatusMessage } from "@/frontend/components/settings/status-message";
 import { Textarea } from "@/frontend/components/ui/textarea";
+import { AUDIT_KEY } from "@/frontend/hooks/use-audit";
 import { CURRENT_USER_KEY, type CurrentUser } from "@/frontend/hooks/use-current-user";
 import { useStatus } from "@/frontend/hooks/use-status";
 import { useTranslation } from "@/frontend/hooks/use-translation";
@@ -30,6 +31,7 @@ export function DescriptionSetting({ user }: { user: CurrentUser }) {
     const result = await saveUser("/api/profile", { description: value.trim() });
     if (result.user) {
       queryClient.setQueryData(CURRENT_USER_KEY, result.user);
+      queryClient.invalidateQueries({ queryKey: AUDIT_KEY }); // notificările se reîncarcă
       setValue(result.user.description);
       setStatus({ type: "success", text: t.profile.descriptionSaved });
     } else {

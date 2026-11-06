@@ -1,29 +1,58 @@
 "use client";
 
-import { Bell, BellOff, Database, FileText, LogIn, Palette, User } from "lucide-react";
+import {
+  Bell,
+  BellOff,
+  FileText,
+  Languages,
+  LoaderCircle,
+  LogIn,
+  LogOut,
+  Palette,
+  SunMoon,
+  User,
+  UserPen,
+  type LucideIcon,
+} from "lucide-react";
 import { CurrentUsername } from "@/frontend/components/current-username";
 import { Avatar, AvatarFallback } from "@/frontend/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/frontend/components/ui/card";
+import { useAudit } from "@/frontend/hooks/use-audit";
 import { useCurrentUser } from "@/frontend/hooks/use-current-user";
 import { useTranslation } from "@/frontend/hooks/use-translation";
+import { formatDateTime, formatRelative } from "@/frontend/lib/format";
+import { LANGUAGES } from "@/frontend/lib/i18n";
 
-// Date simulate pentru cardul de notificări (textele vin din dicționar).
-// Vor fi înlocuite cu GET /api/audit după crearea tabelului audit_events.
-const MOCK_EVENTS = [
-  { id: 1, icon: LogIn, text: "login", time: "minutes" },
-  { id: 2, icon: Palette, text: "accent", time: "hours" },
-  { id: 3, icon: Database, text: "import", time: "yesterday" },
-] as const;
+// Pictograma fiecărui tip de eveniment din jurnal (tipurile sunt în backend/audit.ts)
+const EVENT_ICONS: Record<string, LucideIcon> = {
+  login: LogIn,
+  logout: LogOut,
+  theme_changed: SunMoon,
+  accent_changed: Palette,
+  language_changed: Languages,
+  username_changed: UserPen,
+  description_changed: FileText,
+};
 
 export function HomeView() {
-  const { t } = useTranslation();
+  const { t, language } = useTranslation();
   // Descrierea setată în Profile (textul utilizatorului, nu se traduce)
   const description = useCurrentUser().data?.description.trim();
-  // Listă obișnuită (poate fi și goală când vor veni datele reale)
-  const events: readonly (typeof MOCK_EVENTS)[number][] = MOCK_EVENTS;
+  // Ultimele 8 evenimente ale utilizatorului (GET /api/audit)
+  const { data: events, isLoading, isError } = useAudit();
+
+  // Valoarea nouă din eveniment, tradusă: "teal" → "Teal" / "Turcoaz", "dark" → "Dark" / "Întunecată"
+  function eventValue(type: string, detail: string | null) {
+    if (!detail) return "";
+    if (type === "theme_changed") return t.settings[detail as "light" | "dark"] ?? detail;
+    if (type === "accent_changed") return t.settings.accents[detail as keyof typeof t.settings.accents] ?? detail;
+    if (type === "language_changed") return LANGUAGES.find((l) => l.id === detail)?.label ?? detail;
+    return detail; // username-ul nou rămâne cum l-a scris utilizatorul
+  }
 
   return (
-    <div className="mx-auto flex w-full max-w-3xl flex-col gap-10">
+    // Aceeași lățime ca la celelalte pagini: 80% pe ecrane mari, toată lățimea pe telefon
+    <div className="mx-auto flex w-full flex-col gap-10 md:w-4/5">
       {/* Card de salut */}
       <Card>
         <CardContent className="flex items-center gap-4">
@@ -64,21 +93,42 @@ export function HomeView() {
           <CardTitle>{t.home.notifications}</CardTitle>
         </CardHeader>
         <CardContent>
-          {events.length === 0 ? (
+          {isLoading && (
+            <div className="flex items-center gap-2 py-4 text-sm text-muted-foreground">
+              <LoaderCircle className="size-4 animate-spin" /> {t.common.loading}
+            </div>
+          )}
+          {isError && <p className="text-sm text-destructive">{t.home.loadNotificationsError}</p>}
+
+          {events && events.length === 0 && (
             <div className="flex flex-col items-center gap-2 py-8 text-center">
               <BellOff className="size-8 text-muted-foreground" />
               <p className="font-medium">{t.home.noNotifications}</p>
               <p className="text-sm text-muted-foreground">{t.home.noNotificationsHint}</p>
             </div>
-          ) : (
+          )}
+
+          {events && events.length > 0 && (
             <ul className="flex flex-col divide-y divide-border">
-              {events.map((event) => (
-                <li key={event.id} className="flex items-center gap-3 py-3">
-                  <event.icon className="size-5 text-muted-foreground" />
-                  <span className="flex-1 text-sm">{t.home.mockEvents[event.text]}</span>
-                  <span className="text-xs text-muted-foreground">{t.home.mockTimes[event.time]}</span>
-                </li>
-              ))}
+              {events.map((event) => {
+                const Icon = EVENT_ICONS[event.type] ?? Bell;
+                return (
+                  <li key={event.id} className="flex items-center gap-3 py-3">
+                    <Icon className="size-5 shrink-0 text-muted-foreground" />
+                    <span className="flex-1 text-sm">
+                      {t.home.events[event.type]?.(eventValue(event.type, event.detail)) ?? event.type}
+                    </span>
+                    {/* Timp relativ („acum 5 minute”); data exactă apare la hover */}
+                    <time
+                      dateTime={event.createdAt}
+                      title={formatDateTime(event.createdAt, language)}
+                      className="shrink-0 text-xs text-muted-foreground"
+                    >
+                      {formatRelative(event.createdAt, language)}
+                    </time>
+                  </li>
+                );
+              })}
             </ul>
           )}
         </CardContent>

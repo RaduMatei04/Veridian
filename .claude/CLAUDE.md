@@ -92,7 +92,7 @@ Veridian: Urban Environmental Monitoring. Proiect de facultate (Next.js + Neon),
 - Ripple la click: hook-ul `useRipple()` (`frontend/hooks/use-ripple.tsx`) + clasa `.ripple` din `globals.css`. Un singur cerc, culoarea textului (`bg-current`, opacitate 0.3 → 0, 600 ms), pornește din punctul de click și acoperă tot butonul; butonul are `relative overflow-hidden`. Pentru `<button>` se folosește `RippleButton` (`frontend/components/ripple-button.tsx`). Aplicat pe: butoanele din meniul sidebar (`SidebarLink`), opțiunile de accent și de temă din Settings. Pe alte butoane: **DE CONFIRMAT**.
 - Mesaje după salvare: componenta `StatusMessage` (`frontend/components/settings/status-message.tsx`). Succes = card cu contur și text verde (`border-success bg-success-muted text-success`), eroare = roșu (`destructive`).
 - Butoane de salvare: `rounded-lg`, în accent (`saveButtonClass` din `settings-section.tsx`).
-- Pagina Settings (ordinea opțiunilor): Accent color → Theme → Language. Pagina Profile: Change username → Description (max 300). Ambele au titlul în accent (`PageHeader`) și conținut pe 80% din lățime (`md:w-4/5`), 100% pe telefon.
+- Pagina Home are aceeași lățime ca restul (`md:w-4/5`). Pagina Settings (ordinea opțiunilor): Accent color → Theme → Language. Pagina Profile: Change username → Description (max 300). Ambele au titlul în accent (`PageHeader`) și conținut pe 80% din lățime (`md:w-4/5`), 100% pe telefon.
 - Logo-ul din sidebar duce la `/home` (al doilea drum spre Home, pe lângă butonul Home).
 - Animații scurte (200 ms) și dezactivate la `prefers-reduced-motion`.
 - Pagina de start are în fundal animația „rețea de senzori” (`SensorNetworkBackground` + logica din `frontend/lib/sensor-network.ts`, pe `<canvas>`): stații și legături albastre (`#3478F6`), unde emise din când în când de o stație, pachete de date care alunecă pe legături, glow la stațiile de lângă cursor. Bucla rulează continuu (fără pauze, **inclusiv la `prefers-reduced-motion`**, la cererea utilizatorului); se oprește doar la plecarea de pe pagină. Setările (număr de stații, viteze, raze) sunt constantele de la începutul fișierului.
@@ -112,9 +112,9 @@ Veridian: Urban Environmental Monitoring. Proiect de facultate (Next.js + Neon),
 ### Grafice și hartă
 
 - Graficele citesc culorile din variabile (`var(--chart-1)`…`var(--chart-3)`, `var(--primary)`, `var(--muted-foreground)`), nu valori fixe.
-- Graficele rămân în familia accentului: `--chart-1` = accentul, `--chart-2` / `--chart-3` = nuanțe mai închise / mai deschise ale lui, definite pentru fiecare accent și temă în `globals.css` („NUANȚE PENTRU GRAFICE”). Fără alte culori pe grafice.
+- Graficele rămân în familia accentului: `--chart-1` = accentul, `--chart-2` = nuanță spălăcită (se vede, nu se impune), `--chart-3` = extrema opusă (marin pe Light, foarte deschisă pe Dark), definite pentru fiecare accent și temă în `globals.css` („NUANȚE PENTRU GRAFICE”). Fără alte culori pe grafice.
 - Harta Leaflet (`react-leaflet`): componentă `"use client"` încărcată cu import dinamic fără SSR (`frontend/components/map/`). Tile-uri Esri fără cheie API: World Light Gray pe Light, World Dark Gray pe Dark (CARTO cere acum cheie). Stilurile Leaflet (popup, controale) sunt suprascrise cu token-uri în `globals.css` (`.map-card ...`); butoanele de zoom sunt carduri rotunjite separate, cu + / − în accent. Harta se recalculează la schimbarea mărimii containerului (`ResizeWatcher`).
 
 ### Contrast
 
-- Textul de pe butoanele în accent folosește `text-primary-foreground` (pe Orange e închis, pe restul alb). Nu forța `text-white` pe fundal de accent.
+- Textul și pictogramele de pe fundal în accent folosesc `text-primary-foreground` (alb la toate cele 6 accente, inclusiv Orange, la cererea utilizatorului). Nu forța `text-white` direct.

@@ -162,7 +162,7 @@ Versiune fixă: pătrat rotunjit `#0e1420` (`rx=14`, viewBox 64) cu V-ul luminos
 | PUT | `/api/settings` | salvare temă + accent |
 | GET | `/api/stations` | lista stațiilor (hartă) |
 | GET | `/api/measurements?stations=1,2,3&parameter=PM2.5&period=<all, 2020, 2021, 2022 sau last-month>` | puncte pentru grafic (medii săptămânale / zilnice / valori orare, după perioadă) + medie/min/max pe stație |
-| GET | `/api/audit?limit=8` | ultimele evenimente (card notificări) |
+| GET | `/api/audit` | ultimele 8 evenimente ale utilizatorului logat (card notificări) |
 
 Fiecare endpoint: validare cu Zod (`safeParse`, 400 la eroare), verificare JWT la rutele protejate (funcție `getUser(request)` reutilizabilă sau middleware), coduri HTTP corecte (200, 400, 401, 404, 500). În documentație, rutele apar într-un tabel (metodă, URL, scop, autentificare necesară).
 
@@ -173,7 +173,7 @@ Fiecare endpoint: validare cu Zod (`safeParse`, 400 la eroare), verificare JWT l
 - `measurements` (referință, orar): id, station_id, measured_at, parameter, value; **index pe `(station_id, measured_at)`**
 - `sensor_daily` (senzori, medii zilnice): id, sensor_id, station_id, day, parameter, value; indexuri pe `(station_id, day)` și `(sensor_id, day)`
 - `parameter` e text (ex. `PM2.5`); lista cu unități e în `backend/parameters.ts`
-- `audit_events`: id, user_id, type, message, created_at, read (**încă neadăugat**)
+- `audit_events`: id, user_id, type, detail, created_at (cu fus orar); index pe `(user_id, created_at)`. Se salvează tipul și valoarea (ex. `accent_changed` + `teal`), textul vine din dicționar.
 
 ---
 
@@ -241,12 +241,11 @@ export function SidebarLink({ href, icon: Icon, children }: {
 1. **Card de salut (sus):** avatar cu pictogramă + „Bine ai revenit, **Username** !", cu numele utilizatorului în **culoarea de accent** (`text-primary`).
 2. **Card Notificări (jos), funcționează ca un jurnal de audit:** ultimele schimbări înregistrate într-un interval de timp. Informații **utile dar minime**, vizibile din prima pagină. Fiecare rând: pictogramă după tip, text scurt, timp relativ („acum 2 ore"). Afișează ultimele 5–8 intrări. Stare goală: pictogramă + „Nu există notificări" + text explicativ scurt.
 
-**Tipuri de evenimente posibile:** acțiuni ale utilizatorului (login, schimbare temă/accent, actualizare profil) și evenimente de date (import nou de măsurători, valoare peste prag).
-
-**DE CONFIRMAT:**
-1. Auditul e doar **personal** sau include și evenimente **globale** de date/alerte?
-2. Ce interval de timp acoperă (de exemplu ultimele 7 zile)?
-3. Păstrăm cele două iconițe din colțul cardului (marchează tot ca citit / golește) sau le lăsăm pentru mai târziu?
+**Decis (noiembrie 2026):**
+- Evenimente doar ale utilizatorului (fără evenimente globale): login, logout, schimbări de temă / accent / limbă, username nou, descriere actualizată. Se scriu în rutele API (`logEvent()` din `backend/audit.ts`), doar când valoarea se schimbă efectiv.
+- Cardul arată ultimele 8, cu pictogramă după tip, text tradus și timp relativ (`Intl.RelativeTimeFormat`); data exactă la hover.
+- Fără stare citit / necitit și fără iconițe în colțul cardului.
+- Evenimentele mai vechi de 30 de zile se șterg la scrierea unui eveniment nou.
 
 Pe telefon, cardurile rămân unul sub altul.
 
@@ -407,7 +406,7 @@ export function RippleButton({ className, children, onClick, ...props }: Compone
 ## 11. Întrebări deschise (de rezolvat cu utilizatorul)
 
 1. Cum se creează conturile (înregistrare vs utilizator demo)?
-2. Auditul din Home: personal sau și global? Ce interval? Păstrăm iconițele din colțul cardului?
+2. ~~Auditul din Home~~ (rezolvat, vezi secțiunea 7).
 3. Unde se aplică ripple-ul (sidebar, user menu, butoane principale)?
 4. Structura și conținutul paginilor Map, Analytics, Stations, Settings, Profile.
 5. Detalii ale paginii de start (în afară de logo, fundal gri închis și butonul „GO TO APPLICATION").

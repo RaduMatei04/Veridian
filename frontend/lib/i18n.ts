@@ -28,18 +28,19 @@ const en = {
     aboutMe: "About me",
     notifications: "Notifications",
     noNotifications: "No notifications",
-    noNotificationsHint: "Your actions and new data events will appear here.",
-    // Date simulate până la tabelul audit_events
-    mockEvents: {
-      login: "Signed in successfully",
-      accent: "Accent color changed to Blue",
-      import: "New measurements imported (QUANT)",
-    },
-    mockTimes: {
-      minutes: "5 minutes ago",
-      hours: "2 hours ago",
-      yesterday: "yesterday",
-    },
+    noNotificationsHint: "Your sign-ins and changes in Settings and Profile will appear here.",
+    loadNotificationsError: "Could not load the notifications.",
+    // Textul fiecărui eveniment din jurnal (tipurile sunt în backend/audit.ts).
+    // v = valoarea nouă, deja tradusă (ex. "Teal"), acolo unde există.
+    events: {
+      login: () => "Signed in",
+      logout: () => "Signed out",
+      theme_changed: (v: string) => `Theme changed to ${v}`,
+      accent_changed: (v: string) => `Accent color changed to ${v}`,
+      language_changed: (v: string) => `Language changed to ${v}`,
+      username_changed: (v: string) => `Username changed to ${v}`,
+      description_changed: () => "Description updated",
+    } as Record<string, (v: string) => string>,
   },
   common: {
     save: "Save",
@@ -161,16 +162,16 @@ const ro: typeof en = {
     aboutMe: "Despre mine",
     notifications: "Notificări",
     noNotifications: "Nu există notificări",
-    noNotificationsHint: "Aici vor apărea acțiunile tale și evenimentele noi din date.",
-    mockEvents: {
-      login: "Autentificare reușită",
-      accent: "Culoarea de accent a fost schimbată în Albastru",
-      import: "Import nou de măsurători (QUANT)",
-    },
-    mockTimes: {
-      minutes: "acum 5 minute",
-      hours: "acum 2 ore",
-      yesterday: "ieri",
+    noNotificationsHint: "Aici vor apărea autentificările tale și schimbările din Setări și Profil.",
+    loadNotificationsError: "Notificările nu au putut fi încărcate.",
+    events: {
+      login: () => "Autentificare reușită",
+      logout: () => "Deconectare",
+      theme_changed: (v: string) => `Tema a fost schimbată în ${v}`,
+      accent_changed: (v: string) => `Culoarea de accent a fost schimbată în ${v}`,
+      language_changed: (v: string) => `Limba a fost schimbată în ${v}`,
+      username_changed: (v: string) => `Username-ul a fost schimbat în ${v}`,
+      description_changed: () => "Descrierea a fost actualizată",
     },
   },
   common: {

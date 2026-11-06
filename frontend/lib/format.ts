@@ -18,3 +18,18 @@ export function formatTime(time: string, resolution: string, language: string, l
         : { month: "short", year: "numeric" };
   return new Intl.DateTimeFormat(language, options).format(date);
 }
+
+// Cât timp a trecut de la un moment: "acum", "acum 5 minute", "ieri", "acum 3 zile" (în limba aleasă).
+export function formatRelative(iso: string, language: string) {
+  const seconds = (new Date(iso).getTime() - Date.now()) / 1000; // negativ = în trecut
+  const rtf = new Intl.RelativeTimeFormat(language, { numeric: "auto" }); // „auto” → „ieri” în loc de „acum 1 zi”
+  if (Math.abs(seconds) < 45) return rtf.format(0, "second"); // „now” / „acum”
+  if (Math.abs(seconds) < 3600) return rtf.format(Math.round(seconds / 60), "minute");
+  if (Math.abs(seconds) < 86400) return rtf.format(Math.round(seconds / 3600), "hour");
+  return rtf.format(Math.round(seconds / 86400), "day");
+}
+
+// Data și ora exacte (apar la hover peste timpul relativ): "6 Nov 2026, 14:32"
+export function formatDateTime(iso: string, language: string) {
+  return new Intl.DateTimeFormat(language, { dateStyle: "medium", timeStyle: "short" }).format(new Date(iso));
+}

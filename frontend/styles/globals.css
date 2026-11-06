@@ -140,7 +140,7 @@
 }
 [data-accent="orange"] {
   --primary: #f07818;
-  --primary-foreground: #1a1a1a; /* alb pe portocaliu are contrast prea mic */
+  --primary-foreground: #ffffff; /* alb, ca la toate accentele (decizia utilizatorului) */
 }
 [data-accent="pink"] {
   --primary: #db2777;
@@ -156,60 +156,61 @@
 }
 
 /* ===== NUANȚE PENTRU GRAFICE (Analytics): 3 culori din familia accentului =====
-   --chart-1 e chiar accentul. --chart-2 și --chart-3 au aceeași nuanță, dar altă luminozitate
-   (calculate în OKLCH), ca liniile să se deosebească fără să iasă din culoarea aleasă.
-   Light: o nuanță mai închisă și una mai deschisă. Dark: una mai deschisă și una mai închisă.
-   (La Orange pe Light, accentul e deja deschis, deci ambele nuanțe sunt mai închise.) */
+   Toate au nuanța accentului (calculate în OKLCH), dar roluri diferite, ca liniile să se deosebească ușor:
+   --chart-1 = accentul (linia principală),
+   --chart-2 = spălăcită: se vede, dar nu iese în față,
+   --chart-3 = extrema opusă: marin / foarte închisă pe Light, foarte deschisă pe Dark
+              (pe fundalul închis, o linie foarte închisă nu s-ar vedea). */
 :root,
 [data-accent="blue"] {
-  --chart-2: #0342ad;
-  --chart-3: #70a3ff;
+  --chart-2: #a1bff2;
+  --chart-3: #00266e;
 }
 [data-accent="teal"] {
-  --chart-2: #025a52;
-  --chart-3: #5db7ab;
+  --chart-2: #a1c7c1;
+  --chart-3: #023631;
 }
 [data-accent="orange"] {
-  --chart-2: #a24d04;
-  --chart-3: #612c02;
+  --chart-2: #e3b295;
+  --chart-3: #4b2000;
 }
 [data-accent="pink"] {
-  --chart-2: #8b0146;
-  --chart-3: #fa679c;
+  --chart-2: #eda6bb;
+  --chart-3: #58012b;
 }
 [data-accent="lila"] {
-  --chart-2: #5826ae;
-  --chart-3: #ab91ff;
+  --chart-2: #bfb4f2;
+  --chart-3: #34136c;
 }
 [data-accent="red"] {
-  --chart-2: #890109;
-  --chart-3: #fa675b;
+  --chart-2: #f0a9a0;
+  --chart-3: #5d0004;
 }
 /* Dark: clasa .dark și data-accent sunt amândouă pe <html> */
 .dark:not([data-accent]),
 .dark[data-accent="blue"] {
-  --chart-2: #9abffe;
-  --chart-3: #0b51cc;
+  --chart-2: #506486;
+  --chart-3: #c2d9ff;
 }
 .dark[data-accent="teal"] {
-  --chart-2: #87cec4;
-  --chart-3: #046d64;
+  --chart-2: #4f6965;
+  --chart-3: #c2dfda;
 }
 .dark[data-accent="orange"] {
-  --chart-2: #fed4bb;
-  --chart-3: #bc5b05;
+  --chart-2: #7c5b48;
+  --chart-3: #f5cfb9;
 }
 .dark[data-accent="pink"] {
-  --chart-2: #fe97b7;
-  --chart-3: #a70256;
+  --chart-2: #825361;
+  --chart-3: #fdc6d5;
 }
 .dark[data-accent="lila"] {
-  --chart-2: #c1b3ff;
-  --chart-3: #6a32cc;
+  --chart-2: #645c86;
+  --chart-3: #d8d0ff;
 }
 .dark[data-accent="red"] {
-  --chart-2: #ff9488;
-  --chart-3: #a8010e;
+  --chart-2: #84554f;
+  --chart-3: #fec9c1;
 }
 
 @layer base {

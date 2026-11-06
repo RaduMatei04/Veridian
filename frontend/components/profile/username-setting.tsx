@@ -6,6 +6,7 @@ import { Save, UserPen } from "lucide-react";
 import { SettingsSection, saveButtonClass } from "@/frontend/components/settings/settings-section";
 import { StatusMessage } from "@/frontend/components/settings/status-message";
 import { Input } from "@/frontend/components/ui/input";
+import { AUDIT_KEY } from "@/frontend/hooks/use-audit";
 import { CURRENT_USER_KEY, type CurrentUser } from "@/frontend/hooks/use-current-user";
 import { useStatus } from "@/frontend/hooks/use-status";
 import { useTranslation } from "@/frontend/hooks/use-translation";
@@ -29,6 +30,7 @@ export function UsernameSetting({ user }: { user: CurrentUser }) {
     if (result.user) {
       // Actualizăm datele ținute minte → numele se schimbă imediat și în sidebar
       queryClient.setQueryData(CURRENT_USER_KEY, result.user);
+      queryClient.invalidateQueries({ queryKey: AUDIT_KEY }); // notificările se reîncarcă
       setValue(result.user.username);
       setStatus({ type: "success", text: t.profile.usernameChanged });
     } else {
